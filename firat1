@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sevgililer Günü Sürprizi</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+        font-family: 'Georgia', serif;
+        color: #ffffff;
+        overflow-x: hidden;
+    }
+
+    #loginScreen {
+        position: fixed;
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%;
+        background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        z-index: 1000;
+        transition: opacity 1s ease;
+    }
+
+    .login-box {
+        background: rgba(255, 255, 255, 0.95);
+        color: #333; 
+        padding: 40px; 
+        border-radius: 15px; 
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .login-box h2 {
+        color: #ff4081;
+        margin-top: 0;
+        font-family: 'Georgia', serif;
+    }
+
+    .login-box input {
+        width: 80%;
+        padding: 12px; 
+        font-size: 20px; 
+        border: 2px solid #ff758c; 
+        border-radius: 8px; 
+        margin-top: 15px; 
+        text-align: center;
+        outline: none;
+    }
+
+    .login-box input:focus {
+        border-color: #ff4081;
+    }
+
+    .login-box button {
+        background: #ff758c; 
+        color: white; 
+        border: none; 
+        padding: 15px 30px; 
+        font-size: 18px; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        margin-top: 20px; 
+        transition: 0.3s;
+        font-weight: bold;
+    }
+
+    .login-box button:hover { 
+        background: #ff4081; 
+        transform: scale(1.05);
+    }
+
+    #errorMessage {
+        color: #e60000;
+        margin-top: 15px;
+        font-weight: bold;
+        display: none;
+    }
+
+    #mainContent {
+        display: none; 
+    }
+
+    .heart {
+        position: fixed;
+        top: -10vh;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.6);
+        transform: rotate(45deg);
+        animation: fall linear infinite;
+        z-index: 1;
+    }
+    .heart::before, .heart::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+    }
+    .heart::before { top: -10px; left: 0; }
+    .heart::after { top: 0; left: -10px; }
+
+    @keyframes fall {
+        0% { transform: translateY(0) rotate(45deg) scale(1); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(45deg) scale(0.5); opacity: 0; }
+    }
+
+    .container {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .typing-container {
+        min-height: 120px;
+        margin-bottom: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #typewriterText {
+        font-size: 2.5em;
+        font-weight: normal;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        max-width: 800px;
+        line-height: 1.5;
+    }
+
+    .gallery {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .polaroid {
+        background: #fff;
+        padding: 20px 20px 30px 20px; 
+        border-radius: 4px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        transform: rotate(-3deg);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        position: relative;
+        max-width: 350px;
+    }
+    
+    .polaroid:nth-child(even) {
+        transform: rotate(4deg);
+    }
+
+    .polaroid:hover {
+        transform: scale(1.08) rotate(0);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        z-index: 20;
+    }
+
+    .polaroid img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 2px;
+    }
+
+    .polaroid-text {
+        font-family: 'Caveat', cursive; 
+        font-size: 2.2em;
+        color: #333; 
+        text-align: center;
+        margin-top: 15px;
+        line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+        #typewriterText { font-size: 1.8em; }
+        .polaroid { max-width: 280px; }
+        .polaroid img { height: 280px; }
+        .polaroid-text { font-size: 1.8em; }
+    }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" src="Rei 6 - Geri Dön.mp3" loop></audio>
+
+<div id="loginScreen">
+    <div class="login-box">
+        <h2>Sadece Bize Özel ❤️</h2>
+        <p>İçeri girmek için lütfen şifremizi gir sevgilim.</p>
+        <input type="password" id="passwordInput" placeholder="Şifre...">
+        <br>
+        <button onclick="checkPassword()">Kilidi Aç</button>
+        <p id="errorMessage">Hatalı şifre, tekrar dener misin? 🥺</p>
+    </div>
+</div>
+
+<div id="mainContent">
+    <div class="container">
+        
+        <div class="typing-container">
+            <h1 id="typewriterText"></h1>
+        </div>
+
+        <div class="gallery">
+            <div class="polaroid">
+                <img src="resim1.jpeg">
+                <div class="polaroid-text">seni seviyorum güzelim ❤️<br>18.05.2024</div>
+            </div>
+            
+            <div class="polaroid">
+                <img src="resim2.jpeg">
+                <div class="polaroid-text">En sevdiğim gülüşün 😊</div>
+            </div>
+            
+            <div class="polaroid">
+                <img src="resim3.jpeg">
+                <div class="polaroid-text">Sonsuza dek... ♾️</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function checkPassword() {
+    const pass = document.getElementById("passwordInput").value;
+    const errorMsg = document.getElementById("errorMessage");
+    const loginScreen = document.getElementById("loginScreen");
+    const mainContent = document.getElementById("mainContent");
+    const music = document.getElementById("bgMusic");
+
+    if (pass === "1805") {
+        errorMsg.style.display = "none";
+        loginScreen.style.opacity = "0";
+        
+        setTimeout(() => {
+            loginScreen.style.display = "none";
+            mainContent.style.display = "block";
+
+            music.volume = 0.5;
+            music.play().catch(() => {});
+
+            startAnimations();
+        }, 800);
+        
+    } else {
+        errorMsg.style.display = "block";
+        document.getElementById("passwordInput").value = "";
+    }
+}
+
+document.getElementById("passwordInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        checkPassword();
+    }
+});
+
+function startAnimations() {
+    const message = "Seninle geçen her saniye, hayatımın en güzel anısı. İyi ki varsın, geri döner misin bitanem?";
+    const words = message.split(" "); 
+    let wordIndex = 0;
+    const targetElement = document.getElementById("typewriterText");
+
+    function typeWords() {
+        if (wordIndex < words.length) {
+            targetElement.innerHTML += words[wordIndex] + " ";
+            wordIndex++;
+            setTimeout(typeWords, 400); 
+        }
+    }
+    setTimeout(typeWords, 1000);
+
+    function createHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 5 + 4 + "s";
+        
+        const scale = Math.random() * 0.5 + 0.5;
+        heart.style.transform = `scale(${scale}) rotate(45deg)`;
+        
+        document.body.appendChild(heart);
+        
+        setTimeout(() => {
+            heart.remove();
+        }, 9000);
+    }
+
+    setInterval(createHeart, 400);
+}
+</script>
+
+</body>
+</html>
