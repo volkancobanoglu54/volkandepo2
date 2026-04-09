@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
 
 <style>
-    /* Genel Ayarlar ve Romantik Arka Plan */
     body {
         margin: 0;
         padding: 0;
@@ -21,7 +20,6 @@
         overflow-x: hidden;
     }
 
-    /* --- ŞİFRE GİRİŞ EKRANI CSS --- */
     #loginScreen {
         position: fixed;
         top: 0; 
@@ -93,12 +91,10 @@
         display: none;
     }
 
-    /* --- ANA İÇERİK KISMI --- */
     #mainContent {
         display: none; 
     }
 
-    /* Kayan Kalpler Animasyonu İçin CSS */
     .heart {
         position: fixed;
         top: -10vh;
@@ -171,12 +167,6 @@
         transform: rotate(4deg);
     }
 
-    .polaroid:hover {
-        transform: scale(1.08) rotate(0);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        z-index: 20;
-    }
-
     .polaroid img {
         width: 100%;
         height: 350px; 
@@ -203,6 +193,8 @@
 </head>
 <body>
 
+<audio id="bgMusic" src="Rei6.mp3" loop></audio>
+
 <div id="loginScreen">
     <div class="login-box">
         <h2>Sadece Bize Özel ❤️</h2>
@@ -216,71 +208,68 @@
 
 <div id="mainContent">
     <div class="container">
-        
         <div class="typing-container">
             <h1 id="typewriterText"></h1>
         </div>
-
         <div class="gallery">
             <div class="polaroid">
                 <img src="resim1.jpeg" alt="Fotoğraf 1">
                 <div class="polaroid-text">İlk buluşmamız... ❤️<br>14.02.2023</div>
             </div>
-            
             <div class="polaroid">
                 <img src="resim2.jpeg" alt="Fotoğraf 2">
                 <div class="polaroid-text">En sevdiğim gülüşün 😊</div>
             </div>
-            
             <div class="polaroid">
                 <img src="resim3.jpeg" alt="Fotoğraf 3">
                 <div class="polaroid-text">Sonsuza dek... ♾️</div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    // Sesi doğrudan JS Objesi olarak oluşturuyoruz.
-    // GitHub'daki dosya adı ile birebir aynı olması için "Rei6.mp3" kullanıldı.
-    const bgMusic = new Audio("rei6.mp3");
-    bgMusic.loop = true;
-    bgMusic.volume = 0.5;
-
     function startSite() {
         const pass = document.getElementById("passwordInput").value;
         const errorMsg = document.getElementById("errorMessage");
         const loginScreen = document.getElementById("loginScreen");
         const mainContent = document.getElementById("mainContent");
+        
+        // Ses objesini çağırıyoruz
+        const music = document.getElementById("bgMusic");
 
         if (pass === "1805") {
-            // Şifre Doğruysa
             errorMsg.style.display = "none";
             
-            // Kullanıcı butona bastığı anda müziği tetikliyoruz
-            bgMusic.play().catch(error => {
-                console.error("Müzik çalınamadı:", error);
-                alert("Müzik başlatılamadı. Lütfen telefonunuzun sessizde olmadığından emin olun.");
-            });
+            // Müziği zorla yüklüyor ve başlatıyoruz
+            music.volume = 0.5;
+            music.load(); // Dosyayı hazırla
+            
+            let playPromise = music.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("Müzik başarıyla başladı!");
+                }).catch(error => {
+                    // EĞER HATA VERİRSE DETAYINI EKRANA YAZDIRACAK
+                    alert("Ses hatası: " + error.message + "\n\nNot: Eğer 'NotSupportedError' veya 'Failed to load' yazıyorsa müzik dosyanız GitHub'da bulunamıyor demektir. Lütfen dosya adını (Büyük/küçük harf) kontrol edin.");
+                });
+            }
 
             loginScreen.style.opacity = "0"; 
             
             setTimeout(() => {
                 loginScreen.style.display = "none"; 
                 mainContent.style.display = "block"; 
-                
                 startAnimations();
             }, 800); 
             
         } else {
-            // Şifre Yanlışsa
             errorMsg.style.display = "block";
             document.getElementById("passwordInput").value = ""; 
         }
     }
 
-    // Enter tuşuna basıldığında da giriş yapabilmesi için
     document.getElementById("passwordInput").addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -289,7 +278,6 @@
     });
 
     function startAnimations() {
-        // Daktilo efekti
         const message = "Seninle geçen her saniye, hayatımın en güzel anısı. İyi ki varsın, Sevgililer Günümüz kutlu olsun sevgilim!";
         const words = message.split(" "); 
         let wordIndex = 0;
@@ -304,24 +292,16 @@
         }
         setTimeout(typeWords, 1000); 
 
-        // Kalp efekti
         function createHeart() {
             const heart = document.createElement("div");
             heart.classList.add("heart");
-            
             heart.style.left = Math.random() * 100 + "vw";
             heart.style.animationDuration = Math.random() * 5 + 4 + "s";
-            
             const scale = Math.random() * 0.5 + 0.5;
             heart.style.transform = `scale(${scale}) rotate(45deg)`;
-            
             document.body.appendChild(heart);
-            
-            setTimeout(() => {
-                heart.remove();
-            }, 9000);
+            setTimeout(() => { heart.remove(); }, 9000);
         }
-
         setInterval(createHeart, 400);
     }
 </script>
