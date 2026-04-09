@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geri Dön...</title>
+<title>Sevgililer Günü Sürprizi</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -203,10 +203,6 @@
 </head>
 <body>
 
-<audio id="bgMusic" preload="auto" loop>
-    <source src="rei6.mp3" type="audio/mpeg">
-</audio>
-
 <div id="loginScreen">
     <div class="login-box">
         <h2>Sadece Bize Özel ❤️</h2>
@@ -246,29 +242,27 @@
 </div>
 
 <script>
+    // Sesi doğrudan JS Objesi olarak oluşturuyoruz.
+    // GitHub'daki dosya adı ile birebir aynı olması için "Rei6.mp3" kullanıldı.
+    const bgMusic = new Audio("Rei6.mp3");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+
     function startSite() {
         const pass = document.getElementById("passwordInput").value;
         const errorMsg = document.getElementById("errorMessage");
         const loginScreen = document.getElementById("loginScreen");
         const mainContent = document.getElementById("mainContent");
-        const music = document.getElementById("bgMusic");
 
         if (pass === "1805") {
             // Şifre Doğruysa
             errorMsg.style.display = "none";
             
-            // MÜZİĞİ BAŞLAT (Mobil cihazlar için güncellendi)
-            music.volume = 0.5;
-            const playPromise = music.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    console.log("Müzik başarıyla başladı.");
-                }).catch(error => {
-                    alert("Tarayıcınız otomatik sesi engelledi. Lütfen telefonunuzun sessizde olmadığından ve medya sesinin açık olduğundan emin olun.");
-                    console.error("Müzik çalınamadı:", error);
-                });
-            }
+            // Kullanıcı butona bastığı anda müziği tetikliyoruz
+            bgMusic.play().catch(error => {
+                console.error("Müzik çalınamadı:", error);
+                alert("Müzik başlatılamadı. Lütfen telefonunuzun sessizde olmadığından emin olun.");
+            });
 
             loginScreen.style.opacity = "0"; 
             
