@@ -193,7 +193,7 @@
 </head>
 <body>
 
-<audio id="bgMusic" src="Rei6.mp3" loop></audio>
+<audio id="bgMusic" src="Rei6.mp3" loop preload="auto"></audio>
 
 <div id="loginScreen">
     <div class="login-box">
@@ -229,30 +229,33 @@
 </div>
 
 <script>
+    const music = document.getElementById("bgMusic");
+    const mainContent = document.getElementById("mainContent");
+
+    // 1. DOKUNMATİK KURTARICI SİSTEMİ (Eğer müzik çalmazsa, ekrana ilk dokunuşta zorla çalar)
+    document.body.addEventListener('click', function() {
+        if (mainContent.style.display === "block" && music.paused) {
+            music.play().catch(e => console.log("Kurtarıcı sistem de çalamadı: ", e));
+        }
+    });
+
     function startSite() {
         const pass = document.getElementById("passwordInput").value;
         const errorMsg = document.getElementById("errorMessage");
         const loginScreen = document.getElementById("loginScreen");
-        const mainContent = document.getElementById("mainContent");
-        
-        // Ses objesini çağırıyoruz
-        const music = document.getElementById("bgMusic");
 
         if (pass === "1805") {
             errorMsg.style.display = "none";
             
-            // Müziği zorla yüklüyor ve başlatıyoruz
-            music.volume = 0.5;
-            music.load(); // Dosyayı hazırla
-            
+            // Müziği en saf haliyle çalmayı deniyoruz (load veya volume ayarı yok!)
             let playPromise = music.play();
             
             if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    console.log("Müzik başarıyla başladı!");
-                }).catch(error => {
-                    // EĞER HATA VERİRSE DETAYINI EKRANA YAZDIRACAK
-                    alert("Ses hatası: " + error.message + "\n\nNot: Eğer 'NotSupportedError' veya 'Failed to load' yazıyorsa müzik dosyanız GitHub'da bulunamıyor demektir. Lütfen dosya adını (Büyük/küçük harf) kontrol edin.");
+                playPromise.catch(error => {
+                    // Eğer hata verirse, ekrana hata kodunu yazdırıyoruz.
+                    // "NotSupportedError" yazarsa dosya adında hala sorun var demektir.
+                    console.log("Tarayıcı sesi engelledi: ", error.name);
+                    alert("Tarayıcı engeli: " + error.name + "\nEkrana bir kez dokunduğunuzda müzik başlayacaktır.");
                 });
             }
 
